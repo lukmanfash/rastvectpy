@@ -53,5 +53,5 @@ def visualize_vector(vector_data):
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
 
-    # Show the plot
+    # Show plot
     plt.show()
