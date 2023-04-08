@@ -55,3 +55,6 @@ def visualize_vector(vector_data):
 
     # Show plot
     plt.show()
+
+
+# More to come
