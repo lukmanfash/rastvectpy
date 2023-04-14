@@ -1,7 +1,8 @@
 """Main module."""
-from osgeo import gdal, ogr
+
 
 def import_data(raster_path, vector_path):
+    from osgeo import gdal, ogr
     # Open the raster file
     raster = gdal.Open(raster_path)
     if raster is None:
