@@ -35,6 +35,7 @@ def import_data(raster_path, vector_path):
 # vector_path = "/path/to/vector.shp"
 # data = import_data(raster_path, vector_path)
 
+
 import numpy as np
 import matplotlib.pyplot as plt
 
