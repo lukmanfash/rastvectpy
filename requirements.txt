@@ -15,4 +15,3 @@ pystac-client
 python-box
 scooby
 xyzservices
-
