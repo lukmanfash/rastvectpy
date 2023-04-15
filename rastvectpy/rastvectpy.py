@@ -1,40 +1,5 @@
 """Main module."""
 
-def import_data(raster_path, vector_path):
-    from osgeo import gdal, ogr
-    # Open the raster file
-    raster = gdal.Open(raster_path)
-    if raster is None:
-        print(f"Could not open {raster_path}")
-        return None
-    
-    # Open the vector file
-    vector = ogr.Open(vector_path)
-    if vector is None:
-        print(f"Could not open {vector_path}")
-        return None
-    
-    # Print some information about the raster and vector data
-    print("Raster Information:")
-    print(f"Driver: {raster.GetDriver().ShortName}")
-    print(f"Size: {raster.RasterXSize} x {raster.RasterYSize}")
-    print(f"Projection: {raster.GetProjection()}")
-    print(f"Number of Bands: {raster.RasterCount}")
-    
-    print("\nVector Information:")
-    layer = vector.GetLayer()
-    print(f"Driver: {vector.GetDriver().ShortName}")
-    print(f"Number of Features: {layer.GetFeatureCount()}")
-    print(f"Geometry Type: {layer.GetGeomType()}")
-    
-    # Return the raster and vector data as a tuple
-    return (raster, vector)
-
-# raster_path = "/path/to/raster.tif"
-# vector_path = "/path/to/vector.shp"
-# data = import_data(raster_path, vector_path)
-
-
 import numpy as np
 import matplotlib.pyplot as plt
 
