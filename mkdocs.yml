@@ -49,6 +49,6 @@ nav:
     - Changelog: changelog.md
     - Report Issues: https://github.com/lukmanfash/rastvectpy/issues
     - Examples:
-            - examples/codetesting.ipynb
+            - docs/codetesting.ipynb
     - API Reference:
           - rastvectpy module: rastvectpy.md
