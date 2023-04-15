@@ -3,7 +3,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def visualize_raster(raster_data):
+def visualize_raster(raster_data):    
     """
     Visualize a raster data using matplotlib.
 
