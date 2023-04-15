@@ -50,5 +50,6 @@ nav:
     - Report Issues: https://github.com/lukmanfash/rastvectpy/issues
     - Examples:
             - docs/codetesting.ipynb
+            - docs/Introduction.ipnyb
     - API Reference:
           - rastvectpy module: rastvectpy.md
