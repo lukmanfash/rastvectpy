@@ -1,4 +1,3 @@
-osgeo
 bqplot
 colour
 folium>=0.11.0,<=0.13.0
