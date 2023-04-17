@@ -49,7 +49,8 @@ nav:
     - Changelog: changelog.md
     - Report Issues: https://github.com/lukmanfash/rastvectpy/issues
     - Examples:
-            - docs/Introd.ipynb
-            - docs/package_description.ipnyb
+            - examples/Introd.ipynb
+            - examples/package_description.ipnyb
+            - examples/folium.ipnyb
     - API Reference:
           - rastvectpy module: rastvectpy.md
