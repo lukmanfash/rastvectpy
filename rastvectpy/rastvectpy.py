@@ -2,6 +2,13 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+import ipyleaflet
+
+class Map(ipyleaflet.Map):
+
+    def __init__(self, center, zoom, **kwargs):
+        super().__init__(center = center, zoom = zoom)
+
 
 def visualize_raster(raster_data):    
     """
