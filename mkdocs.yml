@@ -52,5 +52,6 @@ nav:
             - examples/Introd.ipynb
             - examples/package_description.ipnyb
             - examples/folium.ipnyb
+            - examples/ipyleaflet.ipnyb
     - API Reference:
           - rastvectpy module: rastvectpy.md
