@@ -13,6 +13,18 @@ class Map(ipyleaflet.Map):
         # print(kwargs)
         super().__init__(center = center, zoom = zoom, **kwargs)
 
+        if "layer_control" not in kwargs:
+            kwargs["layer_control"] = True
+
+        if kwargs["layer_control"]:
+            self.add_layer_control()
+
+        if "fullscreen_control" not in kwargs:
+            kwargs["fullscreen_control"] = True
+
+        if kwargs["fullscreen_control"]:
+            self.add_fullscreen_control()
+     
     def add_search_control(self, position="topleft", **kwargs):
         """Add a search control to the map.
 
@@ -67,6 +79,36 @@ class Map(ipyleaflet.Map):
         }
         
         self.add_control(draw_control)
+
+    def add_layer_control(self, position="topright", **kwargs):
+        """Add a layer control to the map.
+
+        Args:
+            kwargs: Keyword arguments to pass to the ipyleaflet.LayersControl constructor.
+        """  
+        layer_control = ipyleaflet.LayersControl(position=position, **kwargs)
+        self.add_control(layer_control)
+
+    def add_fullscreen_control(self, position="topright", **kwargs):
+        """Add a fullscreen control to the map.
+
+        Args:
+            kwargs: Keyword arguments to pass to the ipyleaflet.FullScreenControl constructor.
+        """  
+        fullscreen_control = ipyleaflet.FullScreenControl(position=position, **kwargs)
+        self.add_control(fullscreen_control)
+
+    def add_tile_layer(self, url, name, attribution, **kwargs):
+        """Add a tile layer to the map.
+
+        Args:
+            url (str): The url of the tile layer.
+            name (str): The name of the tile layer.
+            attribution (str): The attribution of the tile layer.
+            kwargs: Keyword arguments to pass to the ipyleaflet.TileLayer constructor.
+        """  
+        tile_layer = ipyleaflet.TileLayer(url=url, name=name, attribution=attribution, **kwargs)
+        self.add_layer(tile_layer)
 
 
 def visualize_raster(raster_data):    
