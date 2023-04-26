@@ -6,7 +6,7 @@ import ipyleaflet
 
 class Map(ipyleaflet.Map):
 
-    def __init__(self, center, zoom, **kwargs):
+    def __init__(self, center, zoom, **kwargs)-> None:
 
         if "scroll_wheel_zoom" not in kwargs:
             kwargs["scroll_wheel_zoom"] = True
@@ -109,6 +109,21 @@ class Map(ipyleaflet.Map):
         """  
         tile_layer = ipyleaflet.TileLayer(url=url, name=name, attribution=attribution, **kwargs)
         self.add_layer(tile_layer)
+
+
+    def add_basemap(self, basemap, **kwargs):
+        """Add a basemap to the map.
+
+        Args:
+            basemap (str): The name of the basemap.
+            kwargs: Keyword arguments to pass to the ipyleaflet.basemap constructor.
+        """  
+        if basemap.lower() == "roadmap":
+            url = 'http://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}'
+            self.add_tile_layer(url, name=basemap, **kwargs)
+        elif basemap.lower() == "satellite":
+            url = 'http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}'
+            self.add_tile_layer(url, name=basemap, **kwargs)
 
 
 def visualize_raster(raster_data):    
