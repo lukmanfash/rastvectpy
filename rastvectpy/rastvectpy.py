@@ -118,11 +118,12 @@ class Map(ipyleaflet.Map):
             basemap (str): The name of the basemap.
             kwargs: Keyword arguments to pass to the ipyleaflet.basemap constructor.
         """  
+
         if basemap.lower() == "roadmap":
             url = 'http://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}'
             self.add_tile_layer(url, name=basemap, **kwargs)
         elif basemap.lower() == "satellite":
-            url = 'http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}'
+            url = 'http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}'            
             self.add_tile_layer(url, name=basemap, **kwargs)
 
 

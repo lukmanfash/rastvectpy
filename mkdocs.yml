@@ -50,8 +50,8 @@ nav:
     - Report Issues: https://github.com/lukmanfash/rastvectpy/issues
     - Examples:
             - examples/Introd.ipynb
-            - examples/package_description.ipnyb
-            - examples/folium.ipnyb
-            - examples/ipyleaflet.ipnyb
+            - examples/package_description.ipynb
+            - examples/folium.ipynb
+            - examples/ipyleaflet.ipynb
     - API Reference:
           - rastvectpy module: rastvectpy.md
