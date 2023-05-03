@@ -171,28 +171,19 @@ class Map(ipyleaflet.Map):
         self.add_geojson(geojson, name=name, **kwargs)
 
    
-# import urllib.request
-# def read_geojson_from_url(url):
-#     """Add a shapefile from url to the map.
+        import requests
+    def read_geojson_from_url(url):
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            gdf = gpd.read_file(response.content)
+            return gdf
+        except (ValueError, requests.exceptions.RequestException) as e:
+        print("Error:", e)
+        return None
 
-#     Args:
-#         url (_type_): _description_
 
-#     Returns:
-#         _type_: _description_
-#     """    
-#     try:
-#         with urllib.request.urlopen(url) as response:
-#             data = response.read().decode()
-#             gdf = gpd.read_file(data)
-#         return gdf
-#     except (urllib.error.URLError, gpd.errors.GeoPandasError) as e:
-#         print(f"Error reading data from URL: {url}\n{e}")
-#         return None
-#     geojson = gdf.__geo_interface__
-#     self.add_geojson(geojson, name=name, **kwargs)
-
-    #or:
+        #or:
     def add_shp(self, url, name='Shapefile', **kwargs):
         """Add a shapefile to the map.
 
