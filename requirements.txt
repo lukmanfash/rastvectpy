@@ -1,4 +1,5 @@
 bqplot
+geopandas
 colour
 folium
 gdown
@@ -15,3 +16,4 @@ pystac-client
 python-box
 scooby
 xyzservices
+urllib

@@ -98,7 +98,7 @@ class Map(ipyleaflet.Map):
         fullscreen_control = ipyleaflet.FullScreenControl(position=position, **kwargs)
         self.add_control(fullscreen_control)
 
-    def add_tile_layer(self, url, name, attribution, **kwargs):
+    def add_tile_layer(self, url, name, attribution="", **kwargs):
         """Add a tile layer to the map.
 
         Args:
@@ -112,6 +112,7 @@ class Map(ipyleaflet.Map):
 
 
     def add_basemap(self, basemap, **kwargs):
+        import xyzservices.providers as xyz
         """Add a basemap to the map.
 
         Args:
@@ -125,6 +126,97 @@ class Map(ipyleaflet.Map):
         elif basemap.lower() == "satellite":
             url = 'http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}'            
             self.add_tile_layer(url, name=basemap, **kwargs)
+        elif basemap.lower() == "terrain":
+            url = 'http://mt0.google.com/vt/lyrs=p&hl=en&x={x}&y={y}&z={z}'
+            self.add_tile_layer(url, name=basemap, **kwargs)
+        elif basemap.lower() == "hybrid":
+            url = 'http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}'
+            self.add_tile_layer(url, name=basemap, **kwargs)
+        else:
+            try:
+                basemap = eval(f"xyz.{basemap}")
+                url = basemap.build_url()
+                attribution = basemap.attribution
+                self.add_tile_layer(url, name=basemap.name, attriution = attributon)
+            except:
+                raise ValueError(f"Basemap '{basemap}' is not supported. Please choose one of the following: roadmap, satellite, terrain, hybrid or provide a valid url.")
+    
+
+    def add_geojson(self, data, name='GeoJSON', **kwargs):
+        """Add a geojson to the map.
+
+        Args:
+            data (dict): The geojson data.
+            kwargs: Keyword arguments to pass to the ipyleaflet.GeoJSON constructor.
+        """  
+        if isinstance(data, str):
+            import json
+            with open(data, "r") as f:
+                data = json.load(f)
+
+        geojson = ipyleaflet.GeoJSON(data=data, name=name, **kwargs)
+        self.add_layer(geojson)
+
+    def add_shp(self, data, name='Shapefile', **kwargs):
+        """Add a shapefile to the map.
+
+        Args:
+            data (str): The url of the shapefile.
+            kwargs: Keyword arguments to pass to the ipyleaflet.GeoData constructor.
+        """  
+        import geopandas as gpd
+        gdf = gpd.read_file(data)
+        # geojson = gdf.to_json() : this convert to a string but needs to be converted to a dictionary
+        geojson = gdf.__geo_interface__
+        self.add_geojson(geojson, name=name, **kwargs)
+
+   
+import urllib.request
+def read_geojson_from_url(url):
+    """Add a shapefile from url to the map.
+
+    Args:
+        url (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
+    try:
+        with urllib.request.urlopen(url) as response:
+            data = response.read().decode()
+            gdf = gpd.read_file(data)
+        return gdf
+    except (urllib.error.URLError, gpd.errors.GeoPandasError) as e:
+        print(f"Error reading data from URL: {url}\n{e}")
+        return None
+    geojson = gdf.__geo_interface__
+    self.add_geojson(geojson, name=name, **kwargs)
+
+    #or:
+    # def add_shp(self, url, name='Shapefile', **kwargs):
+    #     """Add a shapefile to the map.
+
+    #     Args:
+    #         data (str): The url of the shapefile.
+    #         kwargs: Keyword arguments to pass to the ipyleaflet.GeoData constructor.
+    #     """  
+    #     import geopandas as gpd
+    #     gdf = gpd.read_file(url)
+    #     geojson = gdf.__geo_interface__
+    #     self.add_geojson(geojson, name=name, **kwargs)
+
+
+def add_vector(self, vector_data, name='Vector', **kwargs):
+    """Add a vector data to the map.
+
+    Args:
+        vector_data (tuple): A tuple of two 1D arrays representing the x and y coordinates of the vector data.
+        kwargs: Keyword arguments to pass to the ipyleaflet.GeoData constructor.
+    """  
+    import geopandas as gpd
+    gdf = gpd.GeoDataFrame(geometry=gpd.points_from_xy(vector_data[0], vector_data[1]))
+    geojson = gdf.__geo_interface__
+    self.add_geojson(geojson, name=name, **kwargs)
 
 
 def visualize_raster(raster_data):    
