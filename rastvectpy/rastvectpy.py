@@ -170,17 +170,6 @@ class Map(ipyleaflet.Map):
         geojson = gdf.__geo_interface__
         self.add_geojson(geojson, name=name, **kwargs)
 
-    import requests
-    def read_geojson_from_url(url):
-        try:
-            response = requests.get(url)
-            response.raise_for_status()
-            gdf = gpd.read_file(response.content)
-            return gdf
-        except (ValueError, requests.exceptions.RequestException) as e:
-        print("Error:", e)
-        return None
-
 
     def add_shp(self, url, name='Shapefile', **kwargs):
         """Add a shapefile to the map.
@@ -194,20 +183,7 @@ class Map(ipyleaflet.Map):
         geojson = gdf.__geo_interface__
         self.add_geojson(geojson, name=name, **kwargs)
 
-
-    def add_vector(self, vector_data, name='Vector', **kwargs):
-        """Add a vector data to the map.
-
-        Args:
-            vector_data (tuple): A tuple of two 1D arrays representing the x and y coordinates of the vector data.
-            kwargs: Keyword arguments to pass to the ipyleaflet.GeoData constructor.
-        """  
-        import geopandas as gpd
-        gdf = gpd.GeoDataFrame(geometry=gpd.points_from_xy(vector_data[0], vector_data[1]))
-        geojson = gdf.__geo_interface__
-        self.add_geojson(geojson, name=name, **kwargs)
-
-
+    
     def visualize_raster(raster_data):    
         """
         Visualize a raster data using matplotlib.
@@ -220,17 +196,13 @@ class Map(ipyleaflet.Map):
         """
         # Create a figure and axis object
         fig, ax = plt.subplots()
-
         # Set the aspect ratio
         ax.set_aspect('equal')
-
         # Show the raster data as an image
         ax.imshow(raster_data, cmap='gray')
-
         # Set the x and y axis labels
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
-
         # Show the plot
         plt.show()
 
@@ -247,20 +219,15 @@ class Map(ipyleaflet.Map):
         """
         # Create a figure and axis object
         fig, ax = plt.subplots()
-
         # Plot the vector data
         ax.quiver(vector_data[0], vector_data[1], color='blue', scale=1, units='xy', width=0.005, headwidth=5, headlength=7)
-
         # Set the x and y axis limits
         ax.set_xlim([min(vector_data[0])-1, max(vector_data[0])+1])
         ax.set_ylim([min(vector_data[1])-1, max(vector_data[1])+1])
-
         # Set the x and y axis labels
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
-
         # Show plot
         plt.show()
-
 
         # More to come
