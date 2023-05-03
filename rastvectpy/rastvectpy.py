@@ -5,9 +5,19 @@ import matplotlib.pyplot as plt
 import ipyleaflet
 
 class Map(ipyleaflet.Map):
+    """The Map class inherits ipyleaflet.Map
+
+    Args:
+        ipyleaflet (_type_): ipyleaflet module for visualizing vector data
+    """    
 
     def __init__(self, center, zoom, **kwargs)-> None:
+        """ Initialize an ipyleaflet map object.
 
+        Args:
+            center (_type_): center of the map
+            zoom (_type_): zoom level of the map
+        """
         if "scroll_wheel_zoom" not in kwargs:
             kwargs["scroll_wheel_zoom"] = True
         # print(kwargs)

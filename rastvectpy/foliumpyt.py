@@ -3,10 +3,10 @@
 import folium
 
 class Map(folium.Map):
-    """Create a folium map object
+    """The Map class inherits folium.Map
 
     Args:
-        folium (_type_): _description_
+        folium (_type_): _folium  module for visualizing vector data_
     """
     # def __init__(self, location=None, width='100%', height='100%', **kwargs):
     #     super().__init__(location=location, width=width, height=height, **kwargs)
