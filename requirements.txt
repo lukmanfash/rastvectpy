@@ -16,4 +16,4 @@ pystac-client
 python-box
 scooby
 xyzservices
-urllib
+requests
