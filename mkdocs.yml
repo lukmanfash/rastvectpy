@@ -55,3 +55,4 @@ nav:
             - examples/ipyleaflet.ipynb
     - API Reference:
           - rastvectpy module: rastvectpy.md
+          - foliumpyt module: foliumpyt.md
