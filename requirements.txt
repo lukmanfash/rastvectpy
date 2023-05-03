@@ -1,7 +1,7 @@
 bqplot
 geopandas
 colour
-folium
+ folium
 gdown
 geojson
 ipyevents

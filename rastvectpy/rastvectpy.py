@@ -255,5 +255,3 @@ class Map(ipyleaflet.Map):
         ax.set_ylabel('Y')
         # Show plot
         plt.show()
-
-        # More to come
