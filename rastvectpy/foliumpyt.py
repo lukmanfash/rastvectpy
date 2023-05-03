@@ -31,34 +31,47 @@ class Map(folium.Map):
             attribution (str, optional): The tile layer attribution. Defaults to ''.
             kwargs: Additional keyword arguments to pass to the tile layer constructor.
         """        
-        tile_layer = folium.TileLayer(url=url, name=name, attr=attribution, **kwargs)
+        tile_layer = folium.TileLayer(tiles=url, name=name, attr=attribution, **kwargs)
         self.add_child(tile_layer)
     
 
-    def add_basemap(self, basemap="HYBRID", show=True, **kwargs):
+    # def add_basemap(self, basemap="HYBRID", show=True, **kwargs):
+    #     """Add a basemap to the map.
+
+    #     Args:
+    #         basemap (str, optional): Name of the basemap. Defaults to "HYBRID".
+    #         show (bool, optional): Whether to show the basemap in the layer control. Defaults to True.
+    #         kwargs: Additional keyword arguments to pass to the basemap constructor.
+    #     """        
+    #     basemap = basemap.upper()
+    #     if basemap == "HYBRID":
+    #         self.add_tile_layer(name="Google Satellite", tiles="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}", attr="Google", show=show, **kwargs)
+    #     elif basemap == "ROADMAP":
+    #         self.add_tile_layer(name="Google Maps", tiles="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", attr="Google", show=show, **kwargs)
+    #     elif basemap == "TERRAIN":
+    #         self.add_tile_layer(name="Google Terrain", tiles="https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}", attr="Google", show=show, **kwargs)
+    #     elif basemap == "SATELLITE":
+    #         self.add_tile_layer(name="Google Satellite", tiles="https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}", attr="Google", show=show, **kwargs)
+    #     elif basemap == "SATELLITE_ONLY":
+    #         self.add_tile_layer(name="Google Satellite", tiles="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}", attr="Google", show=show, **kwargs)
+    #     elif basemap == "ROADMAP_ONLY":
+    #         self.add_tile_layer(name="Google Maps", tiles="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", attr="Google", show=show, **kwargs)
+    #     else:
+    #         raise ValueError("Unknown basemap: {}".format(basemap))
+
+    
+    def add_basemap_xyz(self, url, name, attribution='', show=True, **kwargs):
         """Add a basemap to the map.
 
         Args:
-            basemap (str, optional): Name of the basemap. Defaults to "HYBRID".
+            url (str): The tile layer url.
+            name (str): The tile layer name.
+            attribution (str, optional): The tile layer attribution. Defaults to ''.
             show (bool, optional): Whether to show the basemap in the layer control. Defaults to True.
             kwargs: Additional keyword arguments to pass to the basemap constructor.
         """        
-        basemap = basemap.upper()
-        if basemap == "HYBRID":
-            self.add_tile_layer(name="Google Satellite", tiles="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}", attr="Google", show=show, **kwargs)
-        elif basemap == "ROADMAP":
-            self.add_tile_layer(name="Google Maps", tiles="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", attr="Google", show=show, **kwargs)
-        elif basemap == "TERRAIN":
-            self.add_tile_layer(name="Google Terrain", tiles="https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}", attr="Google", show=show, **kwargs)
-        elif basemap == "SATELLITE":
-            self.add_tile_layer(name="Google Satellite", tiles="https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}", attr="Google", show=show, **kwargs)
-        elif basemap == "SATELLITE_ONLY":
-            self.add_tile_layer(name="Google Satellite", tiles="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}", attr="Google", show=show, **kwargs)
-        elif basemap == "ROADMAP_ONLY":
-            self.add_tile_layer(name="Google Maps", tiles="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", attr="Google", show=show, **kwargs)
-        else:
-            raise ValueError("Unknown basemap: {}".format(basemap))
-
+        tile_layer = folium.TileLayer(tiles=url, name=name, attr=attribution, show=show, **kwargs)
+        self.add_child(tile_layer)
 
     def add_geojson(self, data, name="GeoJSON", show=True, **kwargs):
         """Add a GeoJSON layer to the map.
