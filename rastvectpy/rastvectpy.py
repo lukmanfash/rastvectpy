@@ -183,7 +183,7 @@ class Map(ipyleaflet.Map):
         geojson = gdf.__geo_interface__
         self.add_geojson(geojson, name=name, **kwargs)
 
-    
+
     def visualize_raster(raster_data):    
         """
         Visualize a raster data using matplotlib.
