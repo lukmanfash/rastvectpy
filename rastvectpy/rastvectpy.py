@@ -137,7 +137,7 @@ class Map(ipyleaflet.Map):
                 basemap = eval(f"xyz.{basemap}")
                 url = basemap.build_url()
                 attribution = basemap.attribution
-                self.add_tile_layer(url, name=basemap.name, attriution = attributon)
+                self.add_tile_layer(url, name=basemap.name, attriution = attribution)
             except:
                 raise ValueError(f"Basemap '{basemap}' is not supported. Please choose one of the following: roadmap, satellite, terrain, hybrid or provide a valid url.")
     
@@ -180,6 +180,32 @@ class Map(ipyleaflet.Map):
         """  
         import geopandas as gpd
         gdf = gpd.read_file(url)
+        geojson = gdf.__geo_interface__
+        self.add_geojson(geojson, name=name, **kwargs)
+
+
+    def read_geojson_from_url(url):
+        import requests
+        import geopandas as gpd
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            gdf = gpd.read_file(response.content)
+            return gdf
+        except (ValueError, requests.exceptions.RequestException) as e:
+            print("Error:", e)
+        return None
+    
+
+    def add_vector(self, vector_data, name='Vector', **kwargs):
+        """Add a vector data to the map.
+
+        Args:
+            vector_data (tuple): A tuple of two 1D arrays representing the x and y coordinates of the vector data.
+            kwargs: Keyword arguments to pass to the ipyleaflet.GeoData constructor.
+        """  
+        import geopandas as gpd
+        gdf = gpd.GeoDataFrame(geometry=gpd.points_from_xy(vector_data[0], vector_data[1]))
         geojson = gdf.__geo_interface__
         self.add_geojson(geojson, name=name, **kwargs)
 
