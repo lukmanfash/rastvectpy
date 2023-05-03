@@ -171,39 +171,39 @@ class Map(ipyleaflet.Map):
         self.add_geojson(geojson, name=name, **kwargs)
 
    
-import urllib.request
-def read_geojson_from_url(url):
-    """Add a shapefile from url to the map.
+# import urllib.request
+# def read_geojson_from_url(url):
+#     """Add a shapefile from url to the map.
 
-    Args:
-        url (_type_): _description_
+#     Args:
+#         url (_type_): _description_
 
-    Returns:
-        _type_: _description_
-    """    
-    try:
-        with urllib.request.urlopen(url) as response:
-            data = response.read().decode()
-            gdf = gpd.read_file(data)
-        return gdf
-    except (urllib.error.URLError, gpd.errors.GeoPandasError) as e:
-        print(f"Error reading data from URL: {url}\n{e}")
-        return None
-    geojson = gdf.__geo_interface__
-    self.add_geojson(geojson, name=name, **kwargs)
+#     Returns:
+#         _type_: _description_
+#     """    
+#     try:
+#         with urllib.request.urlopen(url) as response:
+#             data = response.read().decode()
+#             gdf = gpd.read_file(data)
+#         return gdf
+#     except (urllib.error.URLError, gpd.errors.GeoPandasError) as e:
+#         print(f"Error reading data from URL: {url}\n{e}")
+#         return None
+#     geojson = gdf.__geo_interface__
+#     self.add_geojson(geojson, name=name, **kwargs)
 
     #or:
-    # def add_shp(self, url, name='Shapefile', **kwargs):
-    #     """Add a shapefile to the map.
+    def add_shp(self, url, name='Shapefile', **kwargs):
+        """Add a shapefile to the map.
 
-    #     Args:
-    #         data (str): The url of the shapefile.
-    #         kwargs: Keyword arguments to pass to the ipyleaflet.GeoData constructor.
-    #     """  
-    #     import geopandas as gpd
-    #     gdf = gpd.read_file(url)
-    #     geojson = gdf.__geo_interface__
-    #     self.add_geojson(geojson, name=name, **kwargs)
+        Args:
+            data (str): The url of the shapefile.
+            kwargs: Keyword arguments to pass to the ipyleaflet.GeoData constructor.
+        """  
+        import geopandas as gpd
+        gdf = gpd.read_file(url)
+        geojson = gdf.__geo_interface__
+        self.add_geojson(geojson, name=name, **kwargs)
 
 
 def add_vector(self, vector_data, name='Vector', **kwargs):
