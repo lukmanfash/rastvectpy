@@ -220,48 +220,93 @@ class Map(ipyleaflet.Map):
         self.add_geojson(geojson, name=name, **kwargs)
 
 
-    def visualize_raster(raster_data):    
-        """
-        Visualize a raster data using matplotlib.
+    def add_raster(self, url, name ='Raster', fit_bounds = True, **kwargs):
+        """Add a raster data to the map.
 
-        Parameters:
-        raster_data (numpy.ndarray): A 2D array of raster data.
+        Args:
+            url (str): The url of the raster data.
+            name (str): The name of the raster data.
+            fit_bounds (bool, optional): Whether to fit the map to the extent of the raster data.
+            kwargs: Keyword arguments to pass to the ipyleaflet.ImageOverlay constructor.
+        """  
+        import httpx
 
-        Returns:
-        None
-        """
-        # Create a figure and axis object
-        fig, ax = plt.subplots()
-        # Set the aspect ratio
-        ax.set_aspect('equal')
-        # Show the raster data as an image
-        ax.imshow(raster_data, cmap='gray')
-        # Set the x and y axis labels
-        ax.set_xlabel('X')
-        ax.set_ylabel('Y')
-        # Show the plot
-        plt.show()
+        titiler_endpoint = "https://titiler.xyz"
+
+        # Get bounds(bounding box)
+        r = httpx.get(
+            f"{titiler_endpoint}/cog/info",
+            params = {
+                "url": url,
+            }
+        ).json()
+
+        bounds = r["bounds"]
+
+        # Get th tile url
+        r = httpx.get(
+            f"{titiler_endpoint}/cog/tilejson.json",
+            params = {
+                "url": url,
+            }
+        ).json()
+
+        # Get the tile
+        tile = r['tiles'][0]
+
+        # Add the tile to the map
+        self.add_tile_layer(url=tile, name=name, **kwargs)
+
+        # Descision to fit the map to the bounds
+        if fit_bounds:
+            bbx = [[bounds[1], bounds[0]], [bounds[3], bounds[2]]]
+            self.fit_bounds(bbx)
+       
 
 
-    def visualize_vector(vector_data):
-        """
-        Visualize a vector data using matplotlib.
 
-        Parameters:
-        vector_data (tuple): A tuple of two 1D arrays representing the x and y coordinates of the vector data.
+    # def visualize_raster(raster_data):    
+    #     """
+    #     Visualize a raster data using matplotlib.
 
-        Returns:
-        None
-        """
-        # Create a figure and axis object
-        fig, ax = plt.subplots()
-        # Plot the vector data
-        ax.quiver(vector_data[0], vector_data[1], color='blue', scale=1, units='xy', width=0.005, headwidth=5, headlength=7)
-        # Set the x and y axis limits
-        ax.set_xlim([min(vector_data[0])-1, max(vector_data[0])+1])
-        ax.set_ylim([min(vector_data[1])-1, max(vector_data[1])+1])
-        # Set the x and y axis labels
-        ax.set_xlabel('X')
-        ax.set_ylabel('Y')
-        # Show plot
-        plt.show()
+    #     Parameters:
+    #     raster_data (numpy.ndarray): A 2D array of raster data.
+
+    #     Returns:
+    #     None
+    #     """
+    #     # Create a figure and axis object
+    #     fig, ax = plt.subplots()
+    #     # Set the aspect ratio
+    #     ax.set_aspect('equal')
+    #     # Show the raster data as an image
+    #     ax.imshow(raster_data, cmap='gray')
+    #     # Set the x and y axis labels
+    #     ax.set_xlabel('X')
+    #     ax.set_ylabel('Y')
+    #     # Show the plot
+    #     plt.show()
+
+
+    # def visualize_vector(vector_data):
+    #     """
+    #     Visualize a vector data using matplotlib.
+
+    #     Parameters:
+    #     vector_data (tuple): A tuple of two 1D arrays representing the x and y coordinates of the vector data.
+
+    #     Returns:
+    #     None
+    #     """
+    #     # Create a figure and axis object
+    #     fig, ax = plt.subplots()
+    #     # Plot the vector data
+    #     ax.quiver(vector_data[0], vector_data[1], color='blue', scale=1, units='xy', width=0.005, headwidth=5, headlength=7)
+    #     # Set the x and y axis limits
+    #     ax.set_xlim([min(vector_data[0])-1, max(vector_data[0])+1])
+    #     ax.set_ylim([min(vector_data[1])-1, max(vector_data[1])+1])
+    #     # Set the x and y axis labels
+    #     ax.set_xlabel('X')
+    #     ax.set_ylabel('Y')
+    #     # Show plot
+    #     plt.show()

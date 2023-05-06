@@ -17,3 +17,4 @@ python-box
 scooby
 xyzservices
 requests
+httpx
