@@ -3,6 +3,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import ipyleaflet
+import os
+import ipywidgets as widgets
+import requests
+import geopandas as gpd
+import httpx
 
 class Map(ipyleaflet.Map):
     """The Map class inherits ipyleaflet.Map
@@ -195,8 +200,6 @@ class Map(ipyleaflet.Map):
 
 
     def read_geojson_from_url(url):
-        import requests
-        import geopandas as gpd
         try:
             response = requests.get(url)
             response.raise_for_status()
@@ -229,7 +232,7 @@ class Map(ipyleaflet.Map):
             fit_bounds (bool, optional): Whether to fit the map to the extent of the raster data.
             kwargs: Keyword arguments to pass to the ipyleaflet.ImageOverlay constructor.
         """  
-        import httpx
+        
 
         titiler_endpoint = "https://titiler.xyz"
 
@@ -261,8 +264,37 @@ class Map(ipyleaflet.Map):
         if fit_bounds:
             bbx = [[bounds[1], bounds[0]], [bounds[3], bounds[2]]]
             self.fit_bounds(bbx)
-       
 
+
+    def add_image(self, image, position="bottomright", **kwargs):
+        """Add an image to the map.
+        Args:
+            image (str | ipywidgets.Image): The image to add.
+            position (str, optional): The position of the image, can be one of "topleft",
+                "topright", "bottomleft", "bottomright". Defaults to "bottomright".
+        """
+
+        if isinstance(image, str):
+            if image.startswith("http"):
+                image = widgets.Image(value=requests.get(image).content, **kwargs)
+            elif os.path.exists(image):
+                with open(image, "rb") as f:
+                    image = widgets.Image(value=f.read(), **kwargs)
+        elif isinstance(image, widgets.Image):
+            pass
+        else:
+            raise Exception("Invalid image")
+
+        self.add_widget(image, position=position)
+
+    def add_html(self, html, position="bottomright", **kwargs):
+        """Add HTML to the map.
+        Args:
+            html (str): The HTML to add.
+            position (str, optional): The position of the HTML, can be one of "topleft",
+                "topright", "bottomleft", "bottomright". Defaults to "bottomright".
+        """
+        self.add_widget(html, position=position, **kwargs)
 
 
     # def visualize_raster(raster_data):    
