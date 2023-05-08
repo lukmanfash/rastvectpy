@@ -297,6 +297,15 @@ class Map(ipyleaflet.Map):
         self.add_widget(html, position=position, **kwargs)
 
 
+    # def basemap_demo(self):
+    #     """A demo for using leafmap basemaps."""
+    #     dropdown = widgets.Dropdown(
+    #         options=list(basemaps.keys()),
+    #         value="HYBRID",
+    #         description="Basemaps",
+    #     )
+
+
     # def visualize_raster(raster_data):    
     #     """
     #     Visualize a raster data using matplotlib.
