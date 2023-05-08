@@ -16,7 +16,7 @@ class Map(ipyleaflet.Map):
         ipyleaflet (_type_): ipyleaflet module for visualizing vector data
     """    
 
-    def __init__(self, center, zoom, **kwargs)-> None:
+    def __init__(self, **kwargs)-> None:
         """ Initialize an ipyleaflet map object.
 
         Args:
