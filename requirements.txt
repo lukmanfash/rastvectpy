@@ -18,4 +18,3 @@ scooby
 xyzservices
 requests
 httpx
-GDAL
