@@ -26,7 +26,7 @@ class Map(ipyleaflet.Map):
         if "scroll_wheel_zoom" not in kwargs:
             kwargs["scroll_wheel_zoom"] = True
         # print(kwargs)
-        super().__init__(center = center, zoom = zoom, **kwargs)
+        super().__init__(**kwargs)
 
         if "layer_control" not in kwargs:
             kwargs["layer_control"] = True
