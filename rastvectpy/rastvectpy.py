@@ -7,7 +7,7 @@ import os
 import ipywidgets as widgets
 import requests
 import geopandas as gpd
-import httpx
+from IPython.display import display
 
 class Map(ipyleaflet.Map):
     """The Map class inherits ipyleaflet.Map
@@ -23,10 +23,12 @@ class Map(ipyleaflet.Map):
             center (_type_): center of the map
             zoom (_type_): zoom level of the map
         """
+
+        if "center" not in kwargs:
+            kwargs["center"] = [20, 0]
+
         if "scroll_wheel_zoom" not in kwargs:
             kwargs["scroll_wheel_zoom"] = True
-        # print(kwargs)
-        super().__init__(**kwargs)
 
         if "layer_control" not in kwargs:
             kwargs["layer_control"] = True
@@ -36,9 +38,16 @@ class Map(ipyleaflet.Map):
 
         if "fullscreen_control" not in kwargs:
             kwargs["fullscreen_control"] = True
+                
+        super().__init__(**kwargs)
 
         if kwargs["fullscreen_control"]:
             self.add_fullscreen_control()
+
+        if "height" in kwargs:
+            self.layout.height = kwargs["height"]
+        else:
+            self.layout.height = "500px"
      
     def add_search_control(self, position="topleft", **kwargs):
         """Add a search control to the map.
@@ -232,11 +241,10 @@ class Map(ipyleaflet.Map):
             fit_bounds (bool, optional): Whether to fit the map to the extent of the raster data.
             kwargs: Keyword arguments to pass to the ipyleaflet.ImageOverlay constructor.
         """  
-        
-
+        import httpx
         titiler_endpoint = "https://titiler.xyz"
 
-        # Get bounds(bounding box)
+            # Get bounds(bounding box)
         r = httpx.get(
             f"{titiler_endpoint}/cog/info",
             params = {
@@ -246,7 +254,7 @@ class Map(ipyleaflet.Map):
 
         bounds = r["bounds"]
 
-        # Get th tile url
+            # Get th tile url
         r = httpx.get(
             f"{titiler_endpoint}/cog/tilejson.json",
             params = {
@@ -254,24 +262,57 @@ class Map(ipyleaflet.Map):
             }
         ).json()
 
-        # Get the tile
+            # Get the tile = the url of the raster data
         tile = r['tiles'][0]
 
-        # Add the tile to the map
+            # Add the tile to the map
         self.add_tile_layer(url=tile, name=name, **kwargs)
 
-        # Descision to fit the map to the bounds
+            # Decision to fit the map to the bounds
         if fit_bounds:
             bbx = [[bounds[1], bounds[0]], [bounds[3], bounds[2]]]
             self.fit_bounds(bbx)
 
 
+    def add_widget(self, content, position="bottomright", **kwargs):
+        """Add a widget (e.g., text, HTML, figure) to the map.
+
+        Args:
+            content (str | ipywidgets.Widget | object): The widget to add.
+            position (str, optional): The position of the widget. Defaults to "bottomright".
+            **kwargs: Other keyword arguments for ipywidgets.HTML().
+        """
+
+        allowed_positions = ["topleft", "topright", "bottomleft", "bottomright"]
+
+        if position not in allowed_positions:
+            raise Exception(f"position must be one of {allowed_positions}")
+
+        if "layout" not in kwargs:
+            kwargs["layout"] = widgets.Layout(padding="0px 4px 0px 4px")
+        try:
+            if isinstance(content, str):
+                widget = widgets.HTML(value=content, **kwargs)
+                control = ipyleaflet.WidgetControl(widget=widget, position=position)
+            else:
+                output = widgets.Output(**kwargs)
+                with output:
+                    display(content)
+                control = ipyleaflet.WidgetControl(widget=output, position=position)
+            self.add(control)
+
+        except Exception as e:
+            raise Exception(f"Error adding widget: {e}")
+
+
     def add_image(self, image, position="bottomright", **kwargs):
         """Add an image to the map.
+
         Args:
             image (str | ipywidgets.Image): The image to add.
             position (str, optional): The position of the image, can be one of "topleft",
                 "topright", "bottomleft", "bottomright". Defaults to "bottomright".
+
         """
 
         if isinstance(image, str):
@@ -289,6 +330,7 @@ class Map(ipyleaflet.Map):
 
     def add_html(self, html, position="bottomright", **kwargs):
         """Add HTML to the map.
+
         Args:
             html (str): The HTML to add.
             position (str, optional): The position of the HTML, can be one of "topleft",
