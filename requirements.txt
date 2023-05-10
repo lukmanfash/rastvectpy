@@ -12,9 +12,7 @@ matplotlib
 numpy
 pandas
 pyshp>=2.1.3
-pystac-client
 python-box
-scooby
 xyzservices
 requests
 httpx
