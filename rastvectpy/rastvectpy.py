@@ -6,11 +6,13 @@ import ipyleaflet
 import os
 import ipywidgets as widgets
 import requests
+import pandas as pd
 import geopandas as gpd
 from IPython.display import display
 import collections
 import os
 import xyzservices.providers as xyz
+
 
 class Map(ipyleaflet.Map):
     """The Map class inherits ipyleaflet.Map
@@ -345,6 +347,192 @@ class Map(ipyleaflet.Map):
     def change_basemap(self, change, **kwargs):
         if change['new']:
             self.add(basemap.value)
+
+
+    def csv_to_shp(self, in_csv, out_shp, x="longitude", y="latitude"):
+        # Read the CSV file using pandas
+        df = pd.read_csv(in_csv)
+        
+        # Create a GeoDataFrame from the DataFrame
+        geometry = gpd.points_from_xy(df[x], df[y])
+        gdf = gpd.GeoDataFrame(df, geometry=geometry)
+        
+        # Save the GeoDataFrame as a Shapefile
+        gdf.to_file(out_shp, driver='ESRI Shapefile')
+
+    def csv_to_geojson(in_csv, out_geojson, x="longitude", y="latitude"):
+        # Read the CSV file using pandas
+        df = pd.read_csv(in_csv)
+        
+        # Create a GeoDataFrame from the DataFrame
+        geometry = gpd.points_from_xy(df[x], df[y])
+        gdf = gpd.GeoDataFrame(df, geometry=geometry)
+        
+        # Save the GeoDataFrame as a GeoJSON file
+        gdf.to_file(out_geojson, driver='GeoJSON')
+
+
+    def add_xy_data(
+            self,
+            in_csv,
+            x="longitude",
+            y="latitude",
+            label=None,
+            layer_name="Marker cluster",
+        ):
+            """Adds points from a CSV file containing lat/lon information and display data on the map.
+
+            Args:
+                in_csv (str): The file path to the input CSV file.
+                x (str, optional): The name of the column containing longitude coordinates. Defaults to "longitude".
+                y (str, optional): The name of the column containing latitude coordinates. Defaults to "latitude".
+                label (str, optional): The name of the column containing label information to used for marker popup. Defaults to None.
+                layer_name (str, optional): The layer name to use. Defaults to "Marker cluster".
+
+            Raises:
+                FileNotFoundError: The specified input csv does not exist.
+                ValueError: The specified x column does not exist.
+                ValueError: The specified y column does not exist.
+                ValueError: The specified label column does not exist.
+            """
+            import pandas as pd
+
+            if isinstance(in_csv, pd.DataFrame):
+                df = in_csv
+            elif not in_csv.startswith("http") and (not os.path.exists(in_csv)):
+                raise FileNotFoundError("The specified input csv does not exist.")
+            else:
+                df = pd.read_csv(in_csv)
+
+            col_names = df.columns.values.tolist()
+
+            if x not in col_names:
+                raise ValueError(f"x must be one of the following: {', '.join(col_names)}")
+
+            if y not in col_names:
+                raise ValueError(f"y must be one of the following: {', '.join(col_names)}")
+
+            if label is not None and (label not in col_names):
+                raise ValueError(
+                    f"label must be one of the following: {', '.join(col_names)}"
+                )
+
+            self.default_style = {"cursor": "wait"}
+
+            points = list(zip(df[y], df[x]))
+
+            if label is not None:
+                labels = df[label]
+                markers = [
+                    ipyleaflet.Marker(
+                        location=point,
+                        draggable=False,
+                        popup=widgets.HTML(str(labels[index])),
+                    )
+                    for index, point in enumerate(points)
+                ]
+            else:
+                markers = [
+                    ipyleaflet.Marker(location=point, draggable=False) for point in points
+                ]
+
+            marker_cluster = ipyleaflet.MarkerCluster(markers=markers, name=layer_name)
+            self.add(marker_cluster)
+
+            self.default_style = {"cursor": "default"}
+
+            def add_point_layer(
+                self, filename, popup=None, layer_name="Marker Cluster", **kwargs
+            ):
+                """Adds a point layer to the map with a popup attribute.
+
+                Args:
+                    filename (str): str, http url, path object or file-like object. Either the absolute or relative path to the file or URL to be opened, or any object with a read() method (such as an open file or StringIO)
+                    popup (str | list, optional): Column name(s) to be used for popup. Defaults to None.
+                    layer_name (str, optional): A layer name to use. Defaults to "Marker Cluster".
+
+                Raises:
+                    ValueError: If the specified column name does not exist.
+                    ValueError: If the specified column names do not exist.
+                """
+                import warnings
+
+                warnings.filterwarnings("ignore")
+                check_package(name="geopandas", URL="https://geopandas.org")
+                import geopandas as gpd
+                import fiona
+
+                self.default_style = {"cursor": "wait"}
+
+                if isinstance(filename, gpd.GeoDataFrame):
+                    gdf = filename
+                else:
+                    if not filename.startswith("http"):
+                        filename = os.path.abspath(filename)
+                    ext = os.path.splitext(filename)[1].lower()
+                    if ext == ".kml":
+                        fiona.drvsupport.supported_drivers["KML"] = "rw"
+                        gdf = gpd.read_file(filename, driver="KML", **kwargs)
+                    else:
+                        gdf = gpd.read_file(filename, **kwargs)
+                df = gdf.to_crs(epsg="4326")
+                col_names = df.columns.values.tolist()
+                if popup is not None:
+                    if isinstance(popup, str) and (popup not in col_names):
+                        raise ValueError(
+                            f"popup must be one of the following: {', '.join(col_names)}"
+                        )
+                    elif isinstance(popup, list) and (
+                        not all(item in col_names for item in popup)
+                    ):
+                        raise ValueError(
+                            f"All popup items must be select from: {', '.join(col_names)}"
+                        )
+
+                df["x"] = df.geometry.x
+                df["y"] = df.geometry.y
+
+                points = list(zip(df["y"], df["x"]))
+
+                if popup is not None:
+                    if isinstance(popup, str):
+                        labels = df[popup]
+                        markers = [
+                            ipyleaflet.Marker(
+                                location=point,
+                                draggable=False,
+                                popup=widgets.HTML(str(labels[index])),
+                            )
+                            for index, point in enumerate(points)
+                        ]
+                    elif isinstance(popup, list):
+                        labels = []
+                        for i in range(len(points)):
+                            label = ""
+                            for item in popup:
+                                label = label + str(item) + ": " + str(df[item][i]) + "<br>"
+                            labels.append(label)
+                        df["popup"] = labels
+
+                        markers = [
+                            ipyleaflet.Marker(
+                                location=point,
+                                draggable=False,
+                                popup=widgets.HTML(labels[index]),
+                            )
+                            for index, point in enumerate(points)
+                        ]
+
+                else:
+                    markers = [
+                        ipyleaflet.Marker(location=point, draggable=False) for point in points
+                    ]
+
+                marker_cluster = ipyleaflet.MarkerCluster(markers=markers, name=layer_name)
+                self.add(marker_cluster)
+
+                self.default_style = {"cursor": "default"}
+
 
 
     # def change_basemap(m):
