@@ -55,6 +55,7 @@ nav:
             - examples/ipyleaflet.ipynb
             - examples/raster.ipynb
             - examples/image.ipynb
+            - examples/basemap_dropdown.ipynb
     - API Reference:
           - rastvectpy module: rastvectpy.md
           - foliumpyt module: foliumpyt.md
