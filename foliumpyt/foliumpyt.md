@@ -1,0 +1,3 @@
+# foliumpyt module
+
+::: rastvectpy.foliumpyt
