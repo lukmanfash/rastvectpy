@@ -342,108 +342,113 @@ class Map(ipyleaflet.Map):
         self.add_widget(html, position=position, **kwargs)
 
 
-    def change_basemap(m):
-        """Widget for changing basemaps.
-
-        Args:
-            m (object): rastvectpy.Map.
-        """
-        from box import Box
-        basemaps = Box(xyz_to_leaflet(), frozen_box=True)
-        from .rastvectpy import basemaps
-        from .basemaps import get_xyz_dict
-
-        xyz_dict = get_xyz_dict()
-
-        layers = list(m.layers)
-        if len(layers) == 1:
-            layers = [layers[0]] + [basemaps["OpenStreetMap"]]
-        elif len(layers) > 1 and (layers[1].name != "OpenStreetMap"):
-            layers = [layers[0]] + [basemaps["OpenStreetMap"]] + layers[1:]
-        m.layers = layers
-
-        value = "OpenStreetMap"
-
-        dropdown = widgets.Dropdown(
-            options=list(basemaps.keys()),
-            value=value,
-            layout=widgets.Layout(width="200px"),
-        )
-
-        close_btn = widgets.Button(
-            icon="times",
-            tooltip="Close the basemap widget",
-            button_style="primary",
-            layout=widgets.Layout(width="32px"),
-        )
-
-        basemap_widget = widgets.HBox([dropdown, close_btn])
+    def change_basemap(self, change, **kwargs):
+        if change['new']:
+            self.add(basemap.value)
 
 
-    def split_basemaps(
-        m, layers_dict=None, left_name=None, right_name=None, width="120px", **kwargs
-    ):
-        """Create a split-panel map for visualizing two maps.
+    # def change_basemap(m):
+    #     """Widget for changing basemaps.
 
-        Args:
-            m (ipyleaflet.Map): An ipyleaflet map object.
-            layers_dict (dict, optional): A dictionary of TileLayers. Defaults to None.
-            left_name (str, optional): The default value of the left dropdown list. Defaults to None.
-            right_name (str, optional): The default value of the right dropdown list. Defaults to None.
-            width (str, optional): The width of the dropdown list. Defaults to "120px".
-        """
-        from .rastvectpy import basemaps
+    #     Args:
+    #         m (object): rastvectpy.Map.
+    #     """
+    #     from box import Box
+    #     basemaps = Box(xyz_to_leaflet(), frozen_box=True)
+    #     from .rastvectpy import basemaps
+    #     from .basemaps import get_xyz_dict
 
-        controls = m.controls
-        layers = m.layers
-        # m.layers = [m.layers[0]]
-        m.clear_controls()
+    #     xyz_dict = get_xyz_dict()
 
-        add_zoom = True
-        add_fullscreen = True
+    #     layers = list(m.layers)
+    #     if len(layers) == 1:
+    #         layers = [layers[0]] + [basemaps["OpenStreetMap"]]
+    #     elif len(layers) > 1 and (layers[1].name != "OpenStreetMap"):
+    #         layers = [layers[0]] + [basemaps["OpenStreetMap"]] + layers[1:]
+    #     m.layers = layers
 
-        if layers_dict is None:
-            layers_dict = {}
-            keys = dict(basemaps).keys()
-            for key in keys:
-                if isinstance(basemaps[key], ipyleaflet.WMSLayer):
-                    pass
-                else:
-                    layers_dict[key] = basemaps[key]
+    #     value = "OpenStreetMap"
 
-        keys = list(layers_dict.keys())
-        if left_name is None:
-            left_name = keys[0]
-        if right_name is None:
-            right_name = keys[-1]
+    #     dropdown = widgets.Dropdown(
+    #         options=list(basemaps.keys()),
+    #         value=value,
+    #         layout=widgets.Layout(width="200px"),
+    #     )
 
-        left_layer = layers_dict[left_name]
-        right_layer = layers_dict[right_name]
+    #     close_btn = widgets.Button(
+    #         icon="times",
+    #         tooltip="Close the basemap widget",
+    #         button_style="primary",
+    #         layout=widgets.Layout(width="32px"),
+    #     )
 
-        control = ipyleaflet.SplitMapControl(left_layer=left_layer, right_layer=right_layer)
-        m.add(control)
+    #     basemap_widget = widgets.HBox([dropdown, close_btn])
 
-        left_dropdown = widgets.Dropdown(
-            options=keys, value=left_name, layout=widgets.Layout(width=width)
-        )
 
-        left_control = ipyleaflet.WidgetControl(widget=left_dropdown, position="topleft")
-        m.add(left_control)
+    # def split_basemaps(
+    #     m, layers_dict=None, left_name=None, right_name=None, width="120px", **kwargs
+    # ):
+    #     """Create a split-panel map for visualizing two maps.
 
-        right_dropdown = widgets.Dropdown(
-            options=keys, value=right_name, layout=widgets.Layout(width=width)
-        )
+    #     Args:
+    #         m (ipyleaflet.Map): An ipyleaflet map object.
+    #         layers_dict (dict, optional): A dictionary of TileLayers. Defaults to None.
+    #         left_name (str, optional): The default value of the left dropdown list. Defaults to None.
+    #         right_name (str, optional): The default value of the right dropdown list. Defaults to None.
+    #         width (str, optional): The width of the dropdown list. Defaults to "120px".
+    #     """
+    #     from .rastvectpy import basemaps
 
-        right_control = ipyleaflet.WidgetControl(widget=right_dropdown, position="topright")
-        m.add(right_control)
+    #     controls = m.controls
+    #     layers = m.layers
+    #     # m.layers = [m.layers[0]]
+    #     m.clear_controls()
 
-        close_button = widgets.ToggleButton(
-            value=False,
-            tooltip="Close the tool",
-            icon="times",
-            # button_style="primary",
-            layout=widgets.Layout(height="28px", width="28px", padding="0px 0px 0px 4px"),
-        )
+    #     add_zoom = True
+    #     add_fullscreen = True
+
+    #     if layers_dict is None:
+    #         layers_dict = {}
+    #         keys = dict(basemaps).keys()
+    #         for key in keys:
+    #             if isinstance(basemaps[key], ipyleaflet.WMSLayer):
+    #                 pass
+    #             else:
+    #                 layers_dict[key] = basemaps[key]
+
+    #     keys = list(layers_dict.keys())
+    #     if left_name is None:
+    #         left_name = keys[0]
+    #     if right_name is None:
+    #         right_name = keys[-1]
+
+    #     left_layer = layers_dict[left_name]
+    #     right_layer = layers_dict[right_name]
+
+    #     control = ipyleaflet.SplitMapControl(left_layer=left_layer, right_layer=right_layer)
+    #     m.add(control)
+
+    #     left_dropdown = widgets.Dropdown(
+    #         options=keys, value=left_name, layout=widgets.Layout(width=width)
+    #     )
+
+    #     left_control = ipyleaflet.WidgetControl(widget=left_dropdown, position="topleft")
+    #     m.add(left_control)
+
+    #     right_dropdown = widgets.Dropdown(
+    #         options=keys, value=right_name, layout=widgets.Layout(width=width)
+    #     )
+
+    #     right_control = ipyleaflet.WidgetControl(widget=right_dropdown, position="topright")
+    #     m.add(right_control)
+
+    #     close_button = widgets.ToggleButton(
+    #         value=False,
+    #         tooltip="Close the tool",
+    #         icon="times",
+    #         # button_style="primary",
+    #         layout=widgets.Layout(height="28px", width="28px", padding="0px 0px 0px 4px"),
+    #     )
 
 
     def add_text(
