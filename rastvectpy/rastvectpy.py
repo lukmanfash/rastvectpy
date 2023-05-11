@@ -350,6 +350,15 @@ class Map(ipyleaflet.Map):
 
 
     def csv_to_shp(self, in_csv, out_shp, x="longitude", y="latitude"):
+        """_Convert a CSV file to a shapefile
+
+        Args:
+            in_csv (_csv_): _csv_
+            out_shp (_shp_): _vector data_
+            x (str, optional): _str_. Defaults to "longitude".
+            y (str, optional): _str_. Defaults to "latitude".
+        """        
+
         # Read the CSV file using pandas
         df = pd.read_csv(in_csv)
         
@@ -361,6 +370,15 @@ class Map(ipyleaflet.Map):
         gdf.to_file(out_shp, driver='ESRI Shapefile')
 
     def csv_to_geojson(in_csv, out_geojson, x="longitude", y="latitude"):
+        """_Convert a CSV file to a GeoJSON file_
+
+        Args:
+            in_csv (_csv_): _csv_
+            out_geojson (_GeoJSON_): _vector data_
+            x (str, optional): _str_. Defaults to "longitude".
+            y (str, optional): _str_. Defaults to "latitude".
+        """        
+
         # Read the CSV file using pandas
         df = pd.read_csv(in_csv)
         
